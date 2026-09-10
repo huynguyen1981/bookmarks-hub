@@ -14,22 +14,16 @@ export async function onRequestPost(context) {
       `INSERT INTO categories (name, color) VALUES (?, ?)`
     ).bind(name, color || '#3b82f6').run();
 
-    // Báo Realtime cho các client qua WebSocket
-    await notifyRealtime(context, 'CATEGORY_ADDED');
+    // Gọi Broadcast sang Worker WebSocket
+    try {
+      await fetch("https://bookmarks-ws.nguyenhuy-1981-hcm.workers.dev/broadcast", {
+        method: "POST",
+        body: JSON.stringify({ type: 'CATEGORY_ADDED' })
+      });
+    } catch (e) {}
 
     return Response.json({ success: true, id: res.meta.last_row_id });
   } catch (e) {
     return Response.json({ error: 'Category already exists or invalid' }, { status: 400 });
-  }
-}
-
-async function notifyRealtime(context, action) {
-  if (context.env.WEBSOCKET_HUB) {
-    const id = context.env.WEBSOCKET_HUB.idFromName("global");
-    const hub = context.env.WEBSOCKET_HUB.get(id);
-    await hub.fetch("http://internal/broadcast", {
-      method: "POST",
-      body: JSON.stringify({ type: action })
-    });
   }
 }
