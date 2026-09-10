@@ -1,18 +1,8 @@
 name = "bookmarks-app"
 pages_build_output_dir = "."
 
-# Bind D1 Database
+# Bind D1 Database (Pages hỗ trợ D1 cực tốt)
 [[d1_databases]]
 binding = "DB"
 database_name = "bookmarks-db"
-database_id = "fd177b20-b31f-4589-86d1-c0db0b4de9a3" # Khi deploy thật sẽ điền ID vào đây
-
-# Durable Object cho WebSocket Realtime
-[durable_objects]
-bindings = [
-  { name = "WEBSOCKET_HUB", class_name = "WebSocketHub" }
-]
-
-[[migrations]]
-tag = "v1"
-new_classes = ["WebSocketHub"]
+database_id = "fd177b20-b31f-4589-86d1-c0db0b4de9a3"
