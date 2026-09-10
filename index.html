@@ -19,7 +19,7 @@
 </head>
 <body class="hub-bg text-gray-200 antialiased h-screen flex overflow-hidden font-sans select-none">
 
-  <!-- RESIZABLE SIDEBAR -->
+  <!-- SIDEBAR -->
   <aside id="sidebar" class="hub-sidebar w-64 flex-shrink-0 flex flex-col justify-between transition-all duration-75 relative z-20" style="width: 260px; min-width: 72px; max-width: 450px;">
     <div class="p-4 flex flex-col h-full overflow-hidden">
       <div class="flex items-center justify-between mb-6">
@@ -43,7 +43,7 @@
           <button onclick="openCategoryModal()" class="hover:text-indigo-400"><span class="material-symbols-outlined text-lg">add</span></button>
         </div>
 
-        <button onclick="filterCategory(null)" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-300 hover:bg-gray-800/60 transition active-cat" id="cat-all">
+        <button onclick="filterCategory(null)" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-300 hover:bg-gray-800/60 transition" id="cat-all">
           <span class="material-symbols-outlined text-xl text-indigo-400 flex-shrink-0">border_all</span>
           <span class="sidebar-content truncate">All Links</span>
         </button>
@@ -62,7 +62,7 @@
     <div id="resizer" class="absolute top-0 right-0 w-1.5 h-full cursor-col-resize hover:bg-indigo-500/50 transition"></div>
   </aside>
 
-  <!-- MAIN WORKSPACE -->
+  <!-- MAIN -->
   <main class="flex-grow flex flex-col h-full min-w-0 bg-[#0b0f19]">
     <header class="h-16 border-b border-gray-800/80 flex items-center justify-between px-6 bg-[#0b0f19]/80 backdrop-blur gap-4">
       <div class="flex items-center gap-4 flex-grow">
@@ -109,7 +109,7 @@
     </div>
   </main>
 
-  <!-- MODALS -->
+  <!-- MODALS CATEGORY / BOOKMARK -->
   <div id="cat-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="hub-card w-full max-w-sm rounded-2xl p-6 space-y-4">
       <h3 class="text-base font-bold text-white flex items-center gap-2">
@@ -159,21 +159,52 @@
     </div>
   </div>
 
+  <!-- CONFIRM DELETE MODAL (NHẬP OKIE) -->
+  <div id="delete-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden z-50 flex items-center justify-center p-4">
+    <div class="hub-card w-full max-w-sm rounded-2xl p-6 space-y-4 border border-red-500/30 shadow-2xl">
+      <div class="flex items-center gap-3 text-red-400">
+        <div class="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-2xl">warning</span>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-white">Xác nhận xóa</h3>
+          <p class="text-xs text-gray-400" id="delete-target-text">Hành động này không thể hoàn tác!</p>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-xs text-gray-300 block mb-2 leading-relaxed">
+          Nhập chữ <span class="font-bold text-red-400 font-mono px-1.5 py-0.5 rounded bg-red-500/10 border border-red-500/20">OKIE</span> vào bên dưới để xác nhận:
+        </label>
+        <input type="text" id="delete-confirm-input" onkeyup="checkDeleteConfirmInput()" placeholder="Nhập OKIE..." 
+          class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2.5 text-sm font-mono text-center text-white focus:outline-none focus:border-red-500 uppercase">
+      </div>
+
+      <div class="flex gap-2 justify-end pt-2">
+        <button onclick="closeDeleteModal()" class="px-4 py-2 text-sm text-gray-400 hover:text-white">Hủy bỏ</button>
+        <button id="btn-confirm-delete" disabled onclick="executeDelete()" 
+          class="px-5 py-2 text-sm bg-red-600/30 text-red-400 font-semibold rounded-lg cursor-not-allowed transition duration-200">
+          Xóa vĩnh viễn
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script>
     let state = { categories: [], bookmarks: [], selectedCat: null, currentView: 'card' };
+    let deleteAction = { type: null, id: null };
     let isCollapsed = false;
 
-    // --- WEBSOCKET REALTIME KẾT NỐI SANG WORKER ---
+    // Websocket kết nối an toàn (Không spam log đỏ)
     function initWebSocket() {
-      const wsUrl = 'wss://bookmarks-ws.nguyenhuy-1981-hcm.workers.dev';
-      const ws = new WebSocket(wsUrl);
+      try {
+        const wsUrl = 'wss://bookmarks-ws.nguyenhuy-1981-hcm.workers.dev';
+        const ws = new WebSocket(wsUrl);
 
-      ws.onmessage = (event) => {
-        console.log('⚡ Realtime sync received:', event.data);
-        fetchData();
-      };
-
-      ws.onclose = () => setTimeout(initWebSocket, 3000);
+        ws.onmessage = () => fetchData();
+        ws.onerror = () => {}; // Im lặng nếu WS chưa chạy
+        ws.onclose = () => setTimeout(initWebSocket, 10000);
+      } catch (e) {}
     }
 
     const sidebar = document.getElementById('sidebar');
@@ -256,7 +287,7 @@
             <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background-color: ${c.color}"></span>
             <span class="sidebar-content truncate">${c.name}</span>
           </div>
-          <button onclick="event.stopPropagation(); deleteCategory(${c.id})" title="Delete Category" class="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-500/20 rounded text-gray-400 hover:text-red-400 transition sidebar-content">
+          <button onclick="event.stopPropagation(); promptDelete('category', ${c.id}, '${c.name}')" title="Delete Category" class="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-500/20 rounded text-gray-400 hover:text-red-400 transition sidebar-content">
             <span class="material-symbols-outlined text-base block">delete</span>
           </button>
         </div>
@@ -290,7 +321,7 @@
                 <a href="${b.url}" target="_blank" title="Open Tab" class="p-1.5 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-indigo-400 transition">
                   <span class="material-symbols-outlined text-lg">open_in_new</span>
                 </a>
-                <button onclick="deleteBookmark(${b.id})" title="Delete Bookmark" class="p-1.5 hover:bg-red-500/20 rounded-lg text-gray-400 hover:text-red-400 transition">
+                <button onclick="promptDelete('bookmark', ${b.id}, '${b.title}')" title="Delete Bookmark" class="p-1.5 hover:bg-red-500/20 rounded-lg text-gray-400 hover:text-red-400 transition">
                   <span class="material-symbols-outlined text-lg">delete</span>
                 </button>
               </div>
@@ -318,13 +349,61 @@
               <a href="${b.url}" target="_blank" title="Open Tab" class="p-1.5 hover:bg-gray-800 rounded text-gray-400 hover:text-indigo-400 transition">
                 <span class="material-symbols-outlined text-lg">open_in_new</span>
               </a>
-              <button onclick="deleteBookmark(${b.id})" title="Delete Bookmark" class="p-1.5 hover:bg-red-500/20 rounded text-gray-400 hover:text-red-400 transition">
+              <button onclick="promptDelete('bookmark', ${b.id}, '${b.title}')" title="Delete Bookmark" class="p-1.5 hover:bg-red-500/20 rounded text-gray-400 hover:text-red-400 transition">
                 <span class="material-symbols-outlined text-lg">delete</span>
               </button>
             </div>
           </td>
         </tr>
       `).join('');
+    }
+
+    // --- LOGIC CONFIRM DELETE MODAL ---
+    function promptDelete(type, id, name) {
+      deleteAction = { type, id };
+      const modal = document.getElementById('delete-modal');
+      const text = document.getElementById('delete-target-text');
+      const input = document.getElementById('delete-confirm-input');
+      
+      text.innerText = type === 'bookmark' 
+        ? `Xóa bookmark "${name}"?` 
+        : `Xóa category "${name}"? Tất cả bookmark sẽ về General.`;
+
+      input.value = '';
+      checkDeleteConfirmInput();
+      modal.classList.remove('hidden');
+    }
+
+    function closeDeleteModal() {
+      document.getElementById('delete-modal').classList.add('hidden');
+      deleteAction = { type: null, id: null };
+    }
+
+    function checkDeleteConfirmInput() {
+      const val = document.getElementById('delete-confirm-input').value.trim().toUpperCase();
+      const btn = document.getElementById('btn-confirm-delete');
+      if (val === 'OKIE') {
+        btn.disabled = false;
+        btn.className = "px-5 py-2 text-sm bg-red-600 hover:bg-red-500 text-white font-semibold rounded-lg cursor-pointer transition duration-200 shadow-lg shadow-red-600/30";
+      } else {
+        btn.disabled = true;
+        btn.className = "px-5 py-2 text-sm bg-red-600/30 text-red-400 font-semibold rounded-lg cursor-not-allowed transition duration-200";
+      }
+    }
+
+    async function executeDelete() {
+      if (!deleteAction.id) return;
+      const endpoint = deleteAction.type === 'bookmark' 
+        ? `/api/bookmarks/${deleteAction.id}` 
+        : `/api/categories/${deleteAction.id}`;
+      
+      if (deleteAction.type === 'category' && state.selectedCat === deleteAction.id) {
+        state.selectedCat = null;
+      }
+
+      await fetch(endpoint, { method: 'DELETE' });
+      closeDeleteModal();
+      fetchData();
     }
 
     function filterCategory(catId) { state.selectedCat = catId; renderCategories(); renderBookmarks(); }
@@ -342,13 +421,6 @@
       fetchData();
     }
 
-    async function deleteCategory(id) {
-      if (!confirm('Xóa category này sẽ chuyển các bookmark thuộc category về "General". Bồ muốn xóa chứ?')) return;
-      if (state.selectedCat === id) state.selectedCat = null;
-      await fetch(`/api/categories/${id}`, { method: 'DELETE' });
-      fetchData();
-    }
-
     async function saveBookmark() {
       const title = document.getElementById('bm-title').value;
       const url = document.getElementById('bm-url').value;
@@ -356,12 +428,6 @@
       if (!title || !url) return;
       await fetch('/api/bookmarks', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({title, url, category_id}) });
       closeBookmarkModal();
-      fetchData();
-    }
-
-    async function deleteBookmark(id) {
-      if (!confirm('Bồ có chắc muốn xóa bookmark này không?')) return;
-      await fetch(`/api/bookmarks/${id}`, { method: 'DELETE' });
       fetchData();
     }
 
