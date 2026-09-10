@@ -443,9 +443,11 @@
         if (data.title) titleInput.value = data.title;
       } catch(e) {} finally { loader.classList.add('hidden'); }
     }
+// Thay vì dùng WebSocket dễ báo lỗi, xài Polling 10s reload 1 lần siêu nhẹ & mượt
+setInterval(fetchData, 10000);
 
-    fetchData();
-    initWebSocket();
+// Chạy lần đầu khi load trang
+fetchData();
   </script>
 </body>
 </html>
