@@ -16,14 +16,14 @@ export async function onRequestPost(context) {
     `INSERT INTO bookmarks (title, url, category_id) VALUES (?, ?, ?)`
   ).bind(title, url, category_id || null).run();
 
-  // Broadcast tín hiệu có Bookmark mới cho tất cả các tab đang mở
-  if (context.env.WEBSOCKET_HUB) {
-    const id = context.env.WEBSOCKET_HUB.idFromName("global");
-    const hub = context.env.WEBSOCKET_HUB.get(id);
-    await hub.fetch("http://internal/broadcast", {
+  // Gọi Broadcast sang Worker WebSocket
+  try {
+    await fetch("https://bookmarks-ws.nguyenhuy-1981-hcm.workers.dev/broadcast", {
       method: "POST",
       body: JSON.stringify({ type: 'BOOKMARK_ADDED' })
     });
+  } catch (e) {
+    console.error("WS Broadcast error:", e);
   }
 
   return Response.json({ success: true, id: res.meta.last_row_id });
