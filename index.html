@@ -6,7 +6,6 @@
   <title>Bookmarks Hub | Studio</title>
   
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236366f1'><path d='M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z'/></svg>">
-  
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
@@ -20,153 +19,142 @@
 </head>
 <body class="hub-bg text-gray-200 antialiased h-screen flex overflow-hidden font-sans select-none">
 
-  <!-- RESIZABLE & COLLAPSIBLE SIDEBAR -->
+  <!-- RESIZABLE SIDEBAR -->
   <aside id="sidebar" class="hub-sidebar w-64 flex-shrink-0 flex flex-col justify-between transition-all duration-75 relative z-20" style="width: 260px; min-width: 72px; max-width: 450px;">
     <div class="p-4 flex flex-col h-full overflow-hidden">
-      <!-- App Header -->
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-3 sidebar-content overflow-hidden">
-          <div class="w-9 h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 flex-shrink-0">
-            <span class="material-symbols-outlined">bookmark</span>
+          <div class="w-10 h-10 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 flex-shrink-0">
+            <span class="material-symbols-outlined text-2xl">bookmark</span>
           </div>
           <div class="truncate">
-            <h1 class="font-bold text-sm tracking-wide text-white truncate">BOOKMARKS</h1>
-            <p class="text-[10px] text-gray-400 font-mono truncate">HUYN STUDIO</p>
+            <h1 class="font-bold text-base tracking-wide text-white truncate">BOOKMARKS</h1>
+            <p class="text-xs text-gray-400 font-mono truncate">HUYN STUDIO</p>
           </div>
         </div>
         <button onclick="toggleSidebar()" class="p-1.5 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white flex-shrink-0">
-          <span class="material-symbols-outlined text-xl" id="toggle-icon">menu_open</span>
+          <span class="material-symbols-outlined text-2xl" id="toggle-icon">menu_open</span>
         </button>
       </div>
 
-      <!-- Category Filter List (CRUD) -->
       <div class="flex-grow overflow-y-auto no-scrollbar space-y-1">
-        <div class="flex items-center justify-between px-2 py-1 text-[11px] font-semibold text-gray-400 uppercase tracking-wider sidebar-content">
+        <div class="flex items-center justify-between px-2 py-1.5 text-xs font-semibold text-gray-400 uppercase tracking-wider sidebar-content">
           <span>Categories</span>
-          <button onclick="openCategoryModal()" class="hover:text-indigo-400"><span class="material-symbols-outlined text-base">add</span></button>
+          <button onclick="openCategoryModal()" class="hover:text-indigo-400"><span class="material-symbols-outlined text-lg">add</span></button>
         </div>
 
-        <button onclick="filterCategory(null)" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-gray-300 hover:bg-gray-800/60 transition active-cat" id="cat-all">
-          <span class="material-symbols-outlined text-lg text-indigo-400 flex-shrink-0">border_all</span>
+        <button onclick="filterCategory(null)" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-300 hover:bg-gray-800/60 transition active-cat" id="cat-all">
+          <span class="material-symbols-outlined text-xl text-indigo-400 flex-shrink-0">border_all</span>
           <span class="sidebar-content truncate">All Links</span>
         </button>
 
         <div id="category-list" class="space-y-1"></div>
       </div>
 
-      <!-- User Profile -->
       <div class="pt-4 border-t border-gray-800/80 flex items-center gap-3 sidebar-content">
-        <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">H</div>
+        <div class="w-9 h-9 rounded-full bg-indigo-600 flex items-center justify-center text-sm font-bold text-white flex-shrink-0">H</div>
         <div class="truncate flex-grow">
-          <p class="text-xs font-medium text-white truncate">Huy Nguyen</p>
-          <p class="text-[10px] text-gray-400 truncate">Admin Engine</p>
+          <p class="text-sm font-medium text-white truncate">Huy Nguyen</p>
+          <p class="text-xs text-gray-400 truncate">Admin Engine</p>
         </div>
       </div>
     </div>
-
-    <!-- Drag Handle to Resize Sidebar -->
     <div id="resizer" class="absolute top-0 right-0 w-1.5 h-full cursor-col-resize hover:bg-indigo-500/50 transition"></div>
   </aside>
 
   <!-- MAIN WORKSPACE -->
   <main class="flex-grow flex flex-col h-full min-w-0 bg-[#0b0f19]">
-    <!-- Top Workspace Header Bar -->
-    <header class="h-14 border-b border-gray-800/80 flex items-center justify-between px-6 bg-[#0b0f19]/80 backdrop-blur gap-4">
+    <header class="h-16 border-b border-gray-800/80 flex items-center justify-between px-6 bg-[#0b0f19]/80 backdrop-blur gap-4">
       <div class="flex items-center gap-4 flex-grow">
         <div class="relative w-full max-w-xl">
-          <span class="material-symbols-outlined absolute left-3 top-2.5 text-gray-500 text-lg">search</span>
+          <span class="material-symbols-outlined absolute left-3 top-3 text-gray-500 text-xl">search</span>
           <input type="text" id="search-input" onkeyup="renderBookmarks()" placeholder="Search workspace tools, links..." 
-            class="w-full bg-gray-900/80 border border-gray-800 rounded-lg pl-9 pr-4 py-1.5 text-xs text-gray-200 focus:outline-none focus:border-indigo-500 transition">
+            class="w-full bg-gray-900/80 border border-gray-800 rounded-lg pl-10 pr-4 py-2 text-sm text-gray-200 focus:outline-none focus:border-indigo-500 transition">
         </div>
       </div>
 
       <div class="flex items-center gap-3 flex-shrink-0">
-        <!-- View Mode Switcher -->
         <div class="flex bg-gray-900 border border-gray-800 rounded-lg p-1 gap-1">
-          <button id="btn-view-card" onclick="switchView('card')" class="p-1.5 rounded text-gray-400 hover:text-white transition">
-            <span class="material-symbols-outlined text-sm block">grid_view</span>
+          <button id="btn-view-card" onclick="switchView('card')" class="p-2 rounded text-gray-400 hover:text-white transition">
+            <span class="material-symbols-outlined text-base block">grid_view</span>
           </button>
-          <button id="btn-view-table" onclick="switchView('table')" class="p-1.5 rounded text-gray-400 hover:text-white transition">
-            <span class="material-symbols-outlined text-sm block">table_rows</span>
+          <button id="btn-view-table" onclick="switchView('table')" class="p-2 rounded text-gray-400 hover:text-white transition">
+            <span class="material-symbols-outlined text-base block">table_rows</span>
           </button>
         </div>
 
-        <button onclick="openBookmarkModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-4 py-2 rounded-lg flex items-center gap-1.5 transition shadow-lg shadow-indigo-600/20">
-          <span class="material-symbols-outlined text-base">add_link</span>
+        <button onclick="openBookmarkModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 transition shadow-lg shadow-indigo-600/20">
+          <span class="material-symbols-outlined text-lg">add_link</span>
           <span class="hidden sm:inline">Add Bookmark</span>
         </button>
       </div>
     </header>
 
-    <!-- Workspace Content Area -->
     <div class="flex-grow p-6 overflow-y-auto no-scrollbar">
-      <!-- Card View Grid -->
-      <div id="bookmark-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      <div id="bookmark-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
 
-      <!-- Table View Container -->
       <div id="bookmark-table-container" class="hub-card rounded-xl border border-gray-800 overflow-hidden hidden">
         <table class="w-full text-left border-collapse">
           <thead>
-            <tr class="border-b border-gray-800 bg-gray-900/50 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">
-              <th class="p-3 pl-4">Title</th>
-              <th class="p-3">Category</th>
-              <th class="p-3">URL</th>
-              <th class="p-3 pr-4 text-right">Actions</th>
+            <tr class="border-b border-gray-800 bg-gray-900/50 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <th class="p-3.5 pl-4">Title</th>
+              <th class="p-3.5">Category</th>
+              <th class="p-3.5">URL</th>
+              <th class="p-3.5 pr-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody id="bookmark-table-body" class="divide-y divide-gray-800/60 text-xs"></tbody>
+          <tbody id="bookmark-table-body" class="divide-y divide-gray-800/60 text-sm"></tbody>
         </table>
       </div>
     </div>
   </main>
 
-  <!-- MODAL: ADD CATEGORY -->
+  <!-- MODALS -->
   <div id="cat-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-    <div class="hub-card w-full max-w-sm rounded-2xl p-5 space-y-4">
-      <h3 class="text-sm font-bold text-white flex items-center gap-2">
+    <div class="hub-card w-full max-w-sm rounded-2xl p-6 space-y-4">
+      <h3 class="text-base font-bold text-white flex items-center gap-2">
         <span class="material-symbols-outlined text-indigo-400">category</span> Manage Category
       </h3>
       <div>
-        <label class="text-[11px] text-gray-400 block mb-1">Category Name</label>
-        <input type="text" id="cat-name" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2.5 text-xs focus:outline-none focus:border-indigo-500 text-gray-200">
+        <label class="text-xs text-gray-400 block mb-1">Category Name</label>
+        <input type="text" id="cat-name" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2.5 text-sm focus:outline-none focus:border-indigo-500 text-gray-200">
       </div>
       <div>
-        <label class="text-[11px] text-gray-400 block mb-1">Tag Color</label>
-        <input type="color" id="cat-color" value="#6366f1" class="w-full h-8 bg-gray-900 border border-gray-800 rounded-lg cursor-pointer">
+        <label class="text-xs text-gray-400 block mb-1">Tag Color</label>
+        <input type="color" id="cat-color" value="#6366f1" class="w-full h-10 bg-gray-900 border border-gray-800 rounded-lg cursor-pointer">
       </div>
       <div class="flex gap-2 justify-end pt-2">
-        <button onclick="closeCategoryModal()" class="px-3 py-1.5 text-xs text-gray-400 hover:text-white">Cancel</button>
-        <button onclick="saveCategory()" class="px-4 py-1.5 text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg">Save</button>
+        <button onclick="closeCategoryModal()" class="px-4 py-2 text-sm text-gray-400 hover:text-white">Cancel</button>
+        <button onclick="saveCategory()" class="px-5 py-2 text-sm bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg">Save</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: ADD BOOKMARK -->
   <div id="bm-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="hub-card w-full max-w-md rounded-2xl p-6 space-y-4">
-      <h3 class="text-sm font-bold text-white flex items-center gap-2">
+      <h3 class="text-base font-bold text-white flex items-center gap-2">
         <span class="material-symbols-outlined text-indigo-400">add_circle</span> Add New Bookmark
       </h3>
       <div class="space-y-3">
         <div>
-          <label class="text-[11px] text-gray-400 block mb-1">Target URL</label>
-          <input type="url" id="bm-url" onblur="autoFetchTitle()" placeholder="https://..." class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2.5 text-xs focus:outline-none focus:border-indigo-500 text-gray-200">
+          <label class="text-xs text-gray-400 block mb-1">Target URL</label>
+          <input type="url" id="bm-url" onblur="autoFetchTitle()" placeholder="https://..." class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2.5 text-sm focus:outline-none focus:border-indigo-500 text-gray-200">
         </div>
         <div>
           <div class="flex justify-between items-center mb-1">
-            <label class="text-[11px] text-gray-400">Bookmark Title</label>
-            <span id="title-loading" class="text-[10px] text-indigo-400 hidden">Auto fetching...</span>
+            <label class="text-xs text-gray-400">Bookmark Title</label>
+            <span id="title-loading" class="text-xs text-indigo-400 hidden">Auto fetching...</span>
           </div>
-          <input type="text" id="bm-title" placeholder="Title auto-filled or type manually" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2.5 text-xs focus:outline-none focus:border-indigo-500 text-gray-200">
+          <input type="text" id="bm-title" placeholder="Title auto-filled or type manually" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2.5 text-sm focus:outline-none focus:border-indigo-500 text-gray-200">
         </div>
         <div>
-          <label class="text-[11px] text-gray-400 block mb-1">Category</label>
-          <select id="bm-category" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2.5 text-xs focus:outline-none focus:border-indigo-500 text-gray-300"></select>
+          <label class="text-xs text-gray-400 block mb-1">Category</label>
+          <select id="bm-category" class="w-full bg-gray-900 border border-gray-800 rounded-lg p-2.5 text-sm focus:outline-none focus:border-indigo-500 text-gray-300"></select>
         </div>
       </div>
       <div class="flex gap-2 justify-end pt-2">
-        <button onclick="closeBookmarkModal()" class="px-3 py-1.5 text-xs text-gray-400 hover:text-white">Cancel</button>
-        <button onclick="saveBookmark()" class="px-4 py-1.5 text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg">Save Bookmark</button>
+        <button onclick="closeBookmarkModal()" class="px-4 py-2 text-sm text-gray-400 hover:text-white">Cancel</button>
+        <button onclick="saveBookmark()" class="px-5 py-2 text-sm bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg">Save Bookmark</button>
       </div>
     </div>
   </div>
@@ -175,34 +163,34 @@
     let state = { categories: [], bookmarks: [], selectedCat: null, currentView: 'card' };
     let isCollapsed = false;
 
-    // --- RESIZABLE & COLLAPSIBLE SIDEBAR LOGIC ---
+    // --- WEBSOCKET REALTIME KẾT NỐI SANG WORKER ---
+    function initWebSocket() {
+      const wsUrl = 'wss://bookmarks-ws.nguyenhuy-1981-hcm.workers.dev';
+      const ws = new WebSocket(wsUrl);
+
+      ws.onmessage = (event) => {
+        console.log('⚡ Realtime sync received:', event.data);
+        fetchData(); // Tự cập nhật lại danh sách khi tab khác thêm/xóa
+      };
+
+      ws.onclose = () => setTimeout(initWebSocket, 3000); // Tự kết nối lại nếu rớt
+    }
+
     const sidebar = document.getElementById('sidebar');
     const resizer = document.getElementById('resizer');
     let isResizing = false;
 
-    resizer.addEventListener('mousedown', (e) => {
-      isResizing = true;
-      document.body.style.cursor = 'col-resize';
-    });
-
+    resizer.addEventListener('mousedown', () => { isResizing = true; document.body.style.cursor = 'col-resize'; });
     window.addEventListener('mousemove', (e) => {
       if (!isResizing) return;
-      let newWidth = e.clientX;
-      if (newWidth > 72 && newWidth < 450) {
-        sidebar.style.width = newWidth + 'px';
-      }
+      if (e.clientX > 72 && e.clientX < 450) sidebar.style.width = e.clientX + 'px';
     });
-
-    window.addEventListener('mouseup', () => {
-      isResizing = false;
-      document.body.style.cursor = 'default';
-    });
+    window.addEventListener('mouseup', () => { isResizing = false; document.body.style.cursor = 'default'; });
 
     function toggleSidebar() {
       isCollapsed = !isCollapsed;
       const texts = document.querySelectorAll('.sidebar-content');
       const icon = document.getElementById('toggle-icon');
-      
       if (isCollapsed) {
         sidebar.dataset.prevWidth = sidebar.style.width;
         sidebar.style.width = '72px';
@@ -215,7 +203,6 @@
       }
     }
 
-    // --- VIEW MODE SWITCHER ---
     function switchView(mode) {
       state.currentView = mode;
       const grid = document.getElementById('bookmark-grid');
@@ -227,74 +214,49 @@
         grid.classList.remove('hidden');
         table.classList.add('hidden');
         btnCard.classList.add('bg-indigo-600', 'text-white');
-        btnCard.classList.remove('text-gray-400');
         btnTable.classList.remove('bg-indigo-600', 'text-white');
-        btnTable.classList.add('text-gray-400');
       } else {
         grid.classList.add('hidden');
         table.classList.remove('hidden');
         btnTable.classList.add('bg-indigo-600', 'text-white');
-        btnTable.classList.remove('text-gray-400');
         btnCard.classList.remove('bg-indigo-600', 'text-white');
-        btnCard.classList.add('text-gray-400');
       }
     }
 
-    // --- UTILITY: COPY TO CLIPBOARD ---
     function copyUrl(url, btnElement) {
       navigator.clipboard.writeText(url).then(() => {
         const iconSpan = btnElement.querySelector('.material-symbols-outlined');
         const oldIcon = iconSpan.innerText;
-        
         iconSpan.innerText = 'check';
         iconSpan.classList.add('text-emerald-400');
-        
-        setTimeout(() => {
-          iconSpan.innerText = oldIcon;
-          iconSpan.classList.remove('text-emerald-400');
-        }, 2000);
+        setTimeout(() => { iconSpan.innerText = oldIcon; iconSpan.classList.remove('text-emerald-400'); }, 2000);
       });
     }
 
-    // --- FETCH & RENDER (SAU KHI ĐÃ LÀM SẠCH MOCK DATA) ---
-async function fetchData() {
-  try {
-    const [catRes, bmRes] = await Promise.all([
-      fetch('/api/categories'), 
-      fetch('/api/bookmarks')
-    ]);
-    
-    if (!catRes.ok || !bmRes.ok) throw new Error('API Response Error');
-    
-    state.categories = await catRes.json();
-    state.bookmarks = await bmRes.json();
-  } catch(e) {
-    console.error('Fetch error:', e);
-    state.categories = [];
-    state.bookmarks = [];
-  }
-  
-  renderCategories();
-  renderBookmarks();
-  switchView('card');
-}
+    async function fetchData() {
+      try {
+        const [catRes, bmRes] = await Promise.all([fetch('/api/categories'), fetch('/api/bookmarks')]);
+        if (!catRes.ok || !bmRes.ok) throw new Error();
+        state.categories = await catRes.json();
+        state.bookmarks = await bmRes.json();
+      } catch(e) {
+        state.categories = []; state.bookmarks = [];
+      }
+      renderCategories();
+      renderBookmarks();
+    }
 
     function renderCategories() {
       const list = document.getElementById('category-list');
       const select = document.getElementById('bm-category');
-      
       list.innerHTML = state.categories.map(c => `
-        <div class="group flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-gray-400 hover:bg-gray-800/60 cursor-pointer ${state.selectedCat === c.id ? 'bg-indigo-600/10 text-indigo-400 font-semibold' : ''}" onclick="filterCategory(${c.id})">
+        <div class="group flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium text-gray-300 hover:bg-gray-800/60 cursor-pointer ${state.selectedCat === c.id ? 'bg-indigo-600/10 text-indigo-400 font-semibold' : ''}" onclick="filterCategory(${c.id})">
           <div class="flex items-center gap-3 truncate">
-            <span class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: ${c.color}"></span>
+            <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background-color: ${c.color}"></span>
             <span class="sidebar-content truncate">${c.name}</span>
           </div>
-          <button onclick="event.stopPropagation(); deleteCategory(${c.id})" class="opacity-0 group-hover:opacity-100 hover:text-red-400 text-xs">
-            <span class="material-symbols-outlined text-sm">delete</span>
-          </button>
         </div>
       `).join('');
-
       select.innerHTML = state.categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
     }
 
@@ -309,47 +271,44 @@ async function fetchData() {
         return matchCat && matchSearch;
       });
 
-      // 1. Render Card View (Nút Copy & Open trực tiếp trên Card)
       grid.innerHTML = filtered.map(b => `
-        <div class="hub-card p-4 rounded-xl hover:border-indigo-500/50 transition duration-200 flex flex-col justify-between group">
+        <div class="hub-card p-5 rounded-xl hover:border-indigo-500/50 transition duration-200 flex flex-col justify-between group">
           <div>
             <div class="flex items-center justify-between mb-3">
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded-md border" style="color: ${b.category_color || '#818cf8'}; border-color: ${b.category_color}33; background-color: ${b.category_color}11">
+              <span class="text-xs font-mono px-2.5 py-1 rounded-md border font-semibold" style="color: ${b.category_color || '#818cf8'}; border-color: ${b.category_color}44; background-color: ${b.category_color}1a">
                 ${b.category_name || 'General'}
               </span>
-              <!-- Quick Actions -->
               <div class="flex items-center gap-1">
-                <button onclick="copyUrl('${b.url}', this)" title="Copy URL" class="p-1 hover:bg-gray-800 rounded text-gray-400 hover:text-white transition">
-                  <span class="material-symbols-outlined text-base">content_copy</span>
+                <button onclick="copyUrl('${b.url}', this)" title="Copy URL" class="p-1.5 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition">
+                  <span class="material-symbols-outlined text-lg">content_copy</span>
                 </button>
-                <a href="${b.url}" target="_blank" title="Open Tab" class="p-1 hover:bg-gray-800 rounded text-gray-400 hover:text-indigo-400 transition">
-                  <span class="material-symbols-outlined text-base">open_in_new</span>
+                <a href="${b.url}" target="_blank" title="Open Tab" class="p-1.5 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-indigo-400 transition">
+                  <span class="material-symbols-outlined text-lg">open_in_new</span>
                 </a>
               </div>
             </div>
-            <h4 class="text-xs font-semibold text-white group-hover:text-indigo-300 line-clamp-2 leading-snug">${b.title}</h4>
+            <h4 class="text-sm font-semibold text-white group-hover:text-indigo-300 line-clamp-2 leading-relaxed">${b.title}</h4>
           </div>
-          <p class="text-[10px] text-gray-500 truncate mt-3 font-mono">${b.url}</p>
+          <p class="text-xs text-gray-400 truncate mt-4 font-mono">${b.url}</p>
         </div>
       `).join('');
 
-      // 2. Render Table View (Nút Copy & Open nằm ngay trên từng Row)
       tableBody.innerHTML = filtered.map(b => `
         <tr class="hover:bg-gray-800/30 transition">
-          <td class="p-3 pl-4 font-medium text-white truncate max-w-[200px]">${b.title}</td>
-          <td class="p-3">
-            <span class="text-[10px] font-mono px-2 py-0.5 rounded-md border" style="color: ${b.category_color || '#818cf8'}; border-color: ${b.category_color}33; background-color: ${b.category_color}11">
+          <td class="p-3.5 pl-4 font-medium text-white truncate max-w-[220px]">${b.title}</td>
+          <td class="p-3.5">
+            <span class="text-xs font-mono px-2 py-0.5 rounded-md border" style="color: ${b.category_color || '#818cf8'}; border-color: ${b.category_color}33">
               ${b.category_name || 'General'}
             </span>
           </td>
-          <td class="p-3 font-mono text-gray-400 truncate max-w-[250px]">${b.url}</td>
-          <td class="p-3 pr-4 text-right">
+          <td class="p-3.5 font-mono text-gray-400 truncate max-w-[280px]">${b.url}</td>
+          <td class="p-3.5 pr-4 text-right">
             <div class="flex items-center justify-end gap-1">
-              <button onclick="copyUrl('${b.url}', this)" title="Copy URL" class="p-1 hover:bg-gray-800 rounded text-gray-400 hover:text-white transition">
-                <span class="material-symbols-outlined text-base">content_copy</span>
+              <button onclick="copyUrl('${b.url}', this)" title="Copy URL" class="p-1.5 hover:bg-gray-800 rounded text-gray-400 hover:text-white transition">
+                <span class="material-symbols-outlined text-lg">content_copy</span>
               </button>
-              <a href="${b.url}" target="_blank" title="Open Tab" class="p-1 hover:bg-gray-800 rounded text-gray-400 hover:text-indigo-400 transition">
-                <span class="material-symbols-outlined text-base">open_in_new</span>
+              <a href="${b.url}" target="_blank" title="Open Tab" class="p-1.5 hover:bg-gray-800 rounded text-gray-400 hover:text-indigo-400 transition">
+                <span class="material-symbols-outlined text-lg">open_in_new</span>
               </a>
             </div>
           </td>
@@ -357,13 +316,7 @@ async function fetchData() {
       `).join('');
     }
 
-    function filterCategory(catId) {
-      state.selectedCat = catId;
-      renderCategories();
-      renderBookmarks();
-    }
-
-    // Modal controls
+    function filterCategory(catId) { state.selectedCat = catId; renderCategories(); renderBookmarks(); }
     function openCategoryModal() { document.getElementById('cat-modal').classList.remove('hidden'); }
     function closeCategoryModal() { document.getElementById('cat-modal').classList.add('hidden'); }
     function openBookmarkModal() { document.getElementById('bm-modal').classList.remove('hidden'); }
@@ -402,6 +355,7 @@ async function fetchData() {
     }
 
     fetchData();
+    initWebSocket(); // Kích hoạt kết nối WebSocket Realtime ngay khi load trang
   </script>
 </body>
 </html>
